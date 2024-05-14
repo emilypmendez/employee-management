@@ -17,9 +17,10 @@ app.use((req, res, next) => {
     next();
 });
 
-console.log('Database User:', process.env.DB_USER);
-console.log('Database Host:', process.env.DB_HOST);
-console.log('Database Name:', process.env.DB_NAME);
+// DEBUGGING
+// console.log('Database User:', process.env.DB_USER);
+// console.log('Database Host:', process.env.DB_HOST);
+// console.log('Database Name:', process.env.DB_NAME);
 
 // Create a MySQL connection pool
 const pool = mysql.createPool({
