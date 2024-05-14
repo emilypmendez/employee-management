@@ -1,9 +1,13 @@
+// Run: node server/server.js
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
 require('dotenv').config();
-
 const app = express();
+const serverless = require('serverless-http');
+const fs = require('fs');
+const path = require('path');
+
 app.use(express.static('public'));
 const port = process.env.PORT || 8081;
 
@@ -17,11 +21,6 @@ app.use((req, res, next) => {
     next();
 });
 
-// DEBUGGING
-// console.log('Database User:', process.env.DB_USER);
-// console.log('Database Host:', process.env.DB_HOST);
-// console.log('Database Name:', process.env.DB_NAME);
-
 // Create a MySQL connection pool
 const pool = mysql.createPool({
     host: process.env.DB_HOST,
@@ -33,13 +32,35 @@ const pool = mysql.createPool({
     queueLimit: 0
 });
 
+// Function to read and execute the SQL file
+const executeSQLFile = async (filePath) => {
+    const sql = fs.readFileSync(filePath, 'utf8');
+    const statements = sql.split(';').filter(Boolean); // Split and remove empty statements
+
+    for (const statement of statements) {
+        await pool.promise().query(statement.trim());
+    }
+};
+
+// Endpoint to initialize the database
+app.get('/api/init-database', async (req, res) => {
+    try {
+        const filePath = path.join(__dirname, 'database.sql');
+        await executeSQLFile(filePath);
+        res.status(200).json({ message: 'Database initialized successfully' });
+    } catch (error) {
+        console.error('Error initializing database:', error);
+        res.status(500).json({ error: 'Database initialization error: ' + error.message });
+    }
+});
+
 // If there is an authentication problem
 // ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
 
-// Start the server
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-});
+// // Start the server (Commented out for the Netlify Function)
+// app.listen(port, () => {
+//     console.log(`Server running on port ${port}`);
+// });
 
 // Test server connection
 app.get('/', (req, res) => {
@@ -178,5 +199,8 @@ app.get('/api/departments', async (req, res) => {
     }
 });
 
-// Export the pool for API usage if needed
-module.exports = pool.promise();
+// // Export the pool for API usage if needed
+// module.exports = pool.promise();
+
+// Export the app as a Netlify function
+module.exports.handler = serverless(app);
