@@ -1,12 +1,12 @@
 // Run: node server/server.js
 const express = require('express');
+const serverless = require('serverless-http');
 const mysql = require('mysql2');
 const cors = require('cors');
-require('dotenv').config();
-const app = express();
-const serverless = require('serverless-http');
 const fs = require('fs');
 const path = require('path');
+require('dotenv').config();
+const app = express();
 
 app.use(express.static('public'));
 const port = process.env.PORT || 8081;
