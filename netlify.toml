@@ -2,6 +2,4 @@
   base = "client"
   publish = "build"
   command = "npm install && npm run build"
-
-[functions]
-  directory = "netlify/functions"
+  functions = "netlify/functions"
