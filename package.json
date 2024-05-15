@@ -21,8 +21,7 @@
   "scripts": {
     "start": "concurrently \"npm run start-client\" \"npm run start-server\"",
     "start-client": "cd client && npm start",
-    "start-server": "cd server && node server.js",
-    "build": "react-scripts build"
+    "start-server": "cd server && node server.js"
   },
   "eslintConfig": {
     "extends": [
