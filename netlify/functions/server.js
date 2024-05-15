@@ -6,9 +6,10 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
+
 const app = express();
 app.use(express.static('public'));
-const port = process.env.PORT || 8081;
+// const port = process.env.PORT || 8081; // Commented out for the Netlify Function
 
 // Middleware
 app.use(cors());
